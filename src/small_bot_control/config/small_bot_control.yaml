@@ -1,0 +1,15 @@
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 1000
+  
+joint_1_controller:
+    joint: joint_1
+    pid: {p: 5000.0, i: 0.00, d: 10.0}
+    type: effort_controllers/JointPositionController
+
+joint_2_controller:
+    joint: joint_2
+    pid: {p: 5000.0, i: 0.00, d: 10.0}
+    type: effort_controllers/JointPositionController
+

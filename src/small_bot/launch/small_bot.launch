@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <!-- <arg name="is_static" default="false"/> -->
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+  </include>
+
+<param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find small_bot)/urdf/small_bot.xacro'" />
+
+ <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="	-urdf 
+    		-model updated_rev 
+    		-param robot_description"/>
+
+<!-- Load joint controller configs from YAML file -->
+<rosparam file="$(find small_bot_control)/config/small_bot_control.yaml" command="load" ns="/small_bot"/>
+
+<!-- Load controllers -->
+<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+	output="screen" ns="/small_bot" args="joint_1_controller joint_2_controller joint_state_controller"/>
+
+<!-- convert joint states to TF transforms for Rviz, etc. -->
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+	respawn="false" output="screen">
+	<remap from="/joint_states" to="/small_bot/joint_states" />
+</node>
+
+
+</launch>
